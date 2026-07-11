@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrevityPrompt Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-container">
+    <!-- Header -->
+    <header class="settings-header">
+      <h1>BrevityPrompt Settings</h1>
+      <p class="subtitle">Customize your prompt shortening patterns</p>
+    </header>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="patterns">Patterns</button>
+      <button class="tab-btn" data-tab="ai">AI Models</button>
+      <button class="tab-btn" data-tab="about">About</button>
+    </div>
+    
+    <!-- Patterns Tab -->
+    <div class="tab-content active" id="patterns-tab">
+      <div class="patterns-form">
+        <div class="form-section">
+          <h2>Shortening Patterns</h2>
+          <p class="section-description">Enable/disable categories and customize regex patterns for each</p>
+          
+          <div id="patterns-list" class="patterns-list">
+            <!-- Dynamically populated -->
+          </div>
+
+          <div class="add-filter">
+            <h3>Add a regex filter</h3>
+            <p>Create a reusable filter for phrases you want removed.</p>
+            <input id="customFilterName" type="text" placeholder="Name, e.g. Sign-off">
+            <input id="customFilterRegex" type="text" placeholder="Regex, e.g. \\b(Cheers|Many thanks)\\b">
+            <button id="addFilterBtn" type="button" class="btn btn-secondary">+ Add filter</button>
+          </div>
+          
+          <div class="form-actions">
+            <button id="resetBtn" class="btn btn-secondary">↻ Reset to Defaults</button>
+            <button id="saveBtn" class="btn btn-primary">✓ Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="ai-tab">
+      <div class="patterns-form">
+        <div class="form-section">
+          <h2>AI compression</h2>
+          <p class="section-description">Local Ollama is tried before the Fireworks companion for longer prompts. No API key is needed for local models.</p>
+          <label class="setting-row"><input id="localModelEnabled" type="checkbox"> Use local Ollama model</label>
+          <label class="field-label">Ollama endpoint<input id="localModelEndpoint" type="url" value="http://localhost:11434"></label>
+          <label class="field-label">Model name<input id="localModelName" type="text" value="gemma3:4b"></label>
+          <label class="setting-row"><input id="cloudCompression" type="checkbox"> Use Fireworks companion when local Ollama is unavailable</label>
+          <label class="field-label">Companion API URL<input id="companionApiUrl" type="url" value="http://localhost:8000" placeholder="http://localhost:8000"></label>
+          <label class="field-label">Minimum characters before AI compression<input id="minCloudCharacters" type="number" min="1" value="280"></label>
+          <div class="form-actions"><button id="saveAiBtn" type="button" class="btn btn-primary">Save AI settings</button></div>
+          <p class="pattern-hint">Setup: install Ollama, run <code>ollama pull gemma3:4b</code>, then enable this option. Companion defaults to <code>http://localhost:8000</code> (must match a host permission in the manifest, e.g. localhost:8000). Remote calls time out after 12s and fall back to local regex.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- About Tab -->
+    <div class="tab-content" id="about-tab">
+      <div class="about-content">
+        <h2>About BrevityPrompt</h2>
+        
+        <div class="info-section">
+          <h3>Purpose</h3>
+          <p>BrevityPrompt automatically removes social fluff from your AI prompts on ChatGPT, Claude, and Gemini to:</p>
+          <ul>
+            <li>Save context tokens</li>
+            <li>Increase signal-to-noise ratio</li>
+            <li>Reduce prompt noise</li>
+          </ul>
+        </div>
+        
+        <div class="info-section">
+          <h3>How It Works</h3>
+          <ol>
+            <li>Click the extension toggle to enable BrevityPrompt</li>
+            <li>Type your prompt as you normally would</li>
+            <li>When you hit Enter or click Send, a preview appears</li>
+            <li>Choose to send the shortened version or original</li>
+          </ol>
+        </div>
+        
+        <div class="info-section">
+          <h3>Privacy</h3>
+          <p>✓ Regex shortening runs locally in your browser<br>
+          ✓ Local Ollama is optional and runs on your machine<br>
+          ✓ Fireworks compression is optional and prompts are never stored or logged by this extension</p>
+        </div>
+        
+        <div class="info-section">
+          <h3>Default Categories</h3>
+          <ul class="pattern-list">
+            <li><strong>Greetings:</strong> Hi, Hello, Hey, Greetings</li>
+            <li><strong>Politeness:</strong> Please, Kindly, Could you, I would appreciate if</li>
+            <li><strong>Fillers:</strong> I was wondering if, I'm looking for, Basically, Essentially</li>
+            <li><strong>Closings:</strong> Thanks, Thank you, Have a great day</li>
+          </ul>
+        </div>
+        
+        <div class="info-section">
+          <h3>Regex Tips</h3>
+          <ul>
+            <li>Use <code>\\b</code> for word boundaries</li>
+            <li>Use <code>|</code> to match alternatives: <code>(option1|option2)</code></li>
+            <li>Use <code>?</code> to make something optional: <code>color?</code></li>
+            <li>Use <code>.*</code> to match any characters</li>
+            <li>Patterns are case-insensitive by default</li>
+          </ul>
+        </div>
+        
+        <div class="info-section">
+          <h3>Version & Support</h3>
+          <p>BrevityPrompt v1.1.0<br>
+          AMD Developer Hackathon Act II — Track 3 (Unicorn)<br>
+          Hybrid: MV3 extension + containerized Fireworks Gemma companion</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+  </div>
+  
+  <script type="module" src="settings.js"></script>
+
+</body>
+</html>

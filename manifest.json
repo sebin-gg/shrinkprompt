@@ -1,0 +1,77 @@
+{
+  "manifest_version": 3,
+  "name": "BrevityPrompt",
+  "version": "5.0.0",
+  "description": "Shorten prompts on ChatGPT, Claude, and Gemini. Local regex + optional Fireworks Gemma companion (AMD Track 3).",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "webRequest",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "*://chatgpt.com/*",
+    "*://claude.ai/*",
+    "*://gemini.google.com/*",
+    "*://*.openai.com/*",
+    "*://*.anthropic.com/*",
+    "*://generativelanguage.googleapis.com/*",
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*",
+    "http://localhost:11434/*",
+    "http://127.0.0.1:11434/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "options_ui": {
+    "page": "src/settings.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "BrevityPrompt - Shorten prompts to save tokens",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://chatgpt.com/*",
+        "*://claude.ai/*",
+        "*://gemini.google.com/*"
+      ],
+      "js": ["src/sniffer.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "*://chatgpt.com/*",
+        "*://claude.ai/*",
+        "*://gemini.google.com/*"
+      ],
+      "js": [
+        "src/adapters/base-chat-adapter.js",
+        "src/adapters/chatgpt-adapter.js",
+        "src/adapters/claude-adapter.js",
+        "src/adapters/gemini-adapter.js",
+        "src/shortener.js",
+        "src/preview-modal.js",
+        "src/dashboard.js",
+        "src/content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

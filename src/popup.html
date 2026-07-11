@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrevityPrompt</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <h1>BrevityPrompt</h1>
+      <p class="subtitle">Shorten prompts · Track 3 hybrid</p>
+    </div>
+    
+    <div class="popup-content">
+      <div class="toggle-section">
+        <label class="toggle-label">
+          <input type="checkbox" id="enableToggle" class="toggle-checkbox">
+          <span class="toggle-switch"></span>
+          <span class="toggle-text" id="toggleText">Disabled</span>
+        </label>
+      </div>
+      
+      <div class="stats-section">
+        <p class="stats-label">Your savings</p>
+        <div class="stats-grid">
+          <div><strong id="tokensSaved">0</strong><span>tokens saved</span></div>
+          <div><strong id="promptsOptimized">0</strong><span>prompts optimized</span></div>
+        </div>
+        <p class="status-message" id="statusMessage">Estimates are based on characters.</p>
+      </div>
+      
+      <div class="popup-footer">
+        <button id="settingsBtn" class="settings-btn">⚙️ Settings</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
