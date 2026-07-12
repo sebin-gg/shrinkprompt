@@ -4,7 +4,7 @@
   "description": "Local-first prompt shortener (Manifest V3 Chrome Extension + SQLite WAL FastAPI companion)",
   "type": "module",
   "scripts": {
-    "test": "node tests/test_clean_prompt.mjs && node tests/test_tokenizer.js",
+    "test": "node tests/test_clean_prompt.mjs && node tests/test_tokenizer.js && node tests/test_markdown_formatter.mjs && node tests/test_semantic_pipeline.mjs",
     "dev": "node tests/run_dev_check.js"
   },
   "private": true,

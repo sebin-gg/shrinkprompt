@@ -5,10 +5,11 @@ import {
   DEFAULT_PATTERNS,
   DEFAULT_COMPANION_CONFIG,
   DEFAULT_STATS,
-  cleanPrompt,
   extractCodeBlocks,
   restoreCodeBlocks
 } from './shared/cleaner-rules.js';
+
+import { optimizePrompt } from './optimizer/pipeline.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. WASM-READY CALIBRATED TOKENIZER (cl100k_base alignment)
@@ -294,7 +295,9 @@ function isExtensionEnabled(enabledValue) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 5. PROMPT SHORTENING LOGIC
+// 5. SEMANTIC OPTIMIZATION PIPELINE
+//    Replaces the former regex-only shortener with the 5-stage semantic engine.
+//    Response shape is identical — content.js and preview-modal.js unchanged.
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function handleCleanPrompt(text, sendResponse, senderTab) {
@@ -308,7 +311,9 @@ async function handleCleanPrompt(text, sendResponse, senderTab) {
       return;
     }
 
-    const locallyCleaned = cleanPrompt(text, patterns);
+    // Run the 5-stage semantic pipeline (Stage 0 applies cleanPrompt internally)
+    const pipelineResult = await optimizePrompt(text, { patterns });
+    const locallyCleaned = pipelineResult.optimized;
     const config = { ...DEFAULT_COMPANION_CONFIG, ...(storage.companionConfig || {}) };
 
     const originalTokens = tokenizer.countTokens(text);
@@ -318,7 +323,7 @@ async function handleCleanPrompt(text, sendResponse, senderTab) {
       original: text,
       shortened: locallyCleaned,
       cleaned: text !== locallyCleaned,
-      provider: 'local-regex',
+      provider: pipelineResult.provider,
       model: null,
       originalTokens: originalTokens,
       shortenedTokens: locallyCleanedTokens,
