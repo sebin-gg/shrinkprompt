@@ -2,7 +2,7 @@
 
 **Chrome Manifest V3 extension** that shortens AI prompts on **ChatGPT**, **Claude.ai**, and **Gemini** — local regex fluff removal plus optional semantic compression via a **containerized companion** (Fireworks Gemma) or local Ollama.
 
-**AMD Developer Hackathon Act II — Track 3 (Unicorn)** hybrid product: extension + Docker/Podman companion. See **[SUBMISSION.md](SUBMISSION.md)** for the judge demo script.
+**AMD Developer Hackathon Act II — Track 3 (Unicorn)** hybrid product: extension + Podman companion. Docker Compose is supported for compatibility. See **[SUBMISSION.md](SUBMISSION.md)** for the judge demo script.
 
 Repo folder may be named `shrinkprompt`; product name is **BrevityPrompt**. Load the folder that contains `manifest.json`.  
 **Extension version:** 5.0.0
@@ -33,7 +33,7 @@ Repo folder may be named `shrinkprompt`; product name is **BrevityPrompt**. Load
 Chrome extensions cannot ship as the only deliverable for containerization requirements (e.g. AMD Hackathon Track 3). This project splits:
 
 ```
-Browser (MV3 extension)                  Container (podman/docker compose)
+Browser (MV3 extension)                  Container (Podman preferred; Docker-compatible)
 ───────────────────────                  ────────────────────────────────
 content.js intercepts Send/Enter    →    (no prompt leaves browser unless)
 background.js local optimization    →    user enabled remote path AND length ≥ threshold
@@ -82,7 +82,7 @@ Required for hackathon demo of cloud inference; optional for everyday local use.
 2. From repo root:
    ```bash
    podman compose up --build
-   # or: docker compose up --build
+   # Docker-compatible fallback: docker compose up --build
    ```
 3. Health: `http://localhost:8000/health` → `fireworks_configured: true` when key present.
 4. Compress API: `POST /v1/compress` JSON `{ "prompt": "..." }` → `{ "compressed_prompt", "provider", "model" }`.
@@ -304,7 +304,7 @@ To run all tokenizer and regex unit tests:
 pnpm test
 ```
 
-For complete instructions on inspecting the Service Worker console, content scripts, and setting up Ollama/Docker companion ports, see **[DEVELOPMENT.md](DEVELOPMENT.md)**.
+For complete instructions on inspecting the Service Worker console, content scripts, and setting up Ollama/Podman companion ports, see **[DEVELOPMENT.md](DEVELOPMENT.md)**. Docker Compose remains a compatibility fallback.
 
 - Chrome/Chromium 88+
 - Extension: vanilla JS (no bundler)
@@ -339,7 +339,7 @@ For complete instructions on inspecting the Service Worker console, content scri
 - **backend/app/main.py:** Replaced in-memory cache with persistent SQLite database (`cache.db`) running in Write-Ahead Logging (WAL) mode. Enabled concurrent reads and sequential writes with `sqlite3` busy timeouts.
 - **SQL Parameterisation:** Implemented parameterized SQL queries (`?`) for database lookups and updates, eliminating SQL injection vulnerability paths.
 - **Eviction / TTL Handling**: Preserves maximum of `64` entries with a `10-minute` cache expiration lifecycle, using transaction context managers.
-- **Docker Compose**: Containerized volume mapping and SQLite database structure are documented for deployment verification.
+- **Podman Compose**: Creator-preferred container workflow; Docker Compose remains compatible. SQLite cache behavior is documented for deployment verification.
 
 ### 2026-07-11 — v3.0.0 Phase 3: Telemetry, Tokenizer, & Routing Engine
 

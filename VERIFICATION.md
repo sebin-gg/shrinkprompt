@@ -67,7 +67,7 @@ Use this checklist to verify everything works correctly before using the extensi
 
 ### Companion (optional)
 - [ ] `.env.example` present; `.env` with key for real Fireworks demo
-- [ ] `podman compose up --build` (or docker) starts service on :8000
+- [ ] `podman compose up --build` starts service on :8000 (`docker compose` compatible fallback)
 - [ ] `GET /health` returns `status: ok`
 - [ ] Long prompt (≥ min chars) with cloud on can hit companion; offline falls back
 

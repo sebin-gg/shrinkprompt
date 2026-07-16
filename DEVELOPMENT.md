@@ -56,9 +56,14 @@ The FastAPI companion provides remote semantic compression.
 
 ### 1. Build and Start Backend
 ```bash
+podman compose up --build -d
+```
+
+Podman Compose is creator-preferred. Docker Compose compatibility fallback:
+
+```bash
 docker compose up --build -d
 ```
-*(or `podman compose up --build -d` if using Podman)*
 
 ### 2. Verification
 Check the container logs and endpoints:
@@ -67,10 +72,12 @@ Check the container logs and endpoints:
 curl http://localhost:8000/health
 # Response: { "status": "ok", "cache_entries": 0, ... }
 
-# View database files inside container volume
-docker compose exec companion ls -la
+# View database files in container filesystem
+podman compose exec brevity-companion ls -la
 # Confirms existence of cache.db, cache.db-wal, and cache.db-shm
 ```
+
+For Docker compatibility, replace `podman compose` with `docker compose`.
 
 ---
 

@@ -2,7 +2,7 @@
 ## Track 3 (Unicorn) Submission Brief
 
 **Product:** Hybrid browser extension + containerized AI companion  
-**Version:** 1.1.0  
+**Version:** 5.0.0  
 **Open model:** Google **Gemma-2-9b-it** via **Fireworks AI** (AMD GPU cloud inference)  
 **Repo root:** folder containing `manifest.json` and `docker-compose.yml`
 
@@ -19,7 +19,7 @@ BrevityPrompt is a local-first Chrome extension that removes prompt fluff on Cha
 | Requirement | How we meet it |
 |-------------|----------------|
 | **Product / startup oriented** | End-user extension (token savings, privacy, settings) + demoable backend |
-| **Containerized** | `docker-compose.yml` → FastAPI companion (`backend/`) |
+| **Containerized** | `docker-compose.yml` → FastAPI Companion (`backend/`); Podman Compose preferred, Docker Compose compatible |
 | **AMD / Fireworks** | `FIREWORKS_API_KEY` → Fireworks chat completions, Gemma model |
 | **Open-source model prize pool** | Default model `accounts/fireworks/models/gemma2-9b-it` |
 
@@ -33,7 +33,7 @@ BrevityPrompt is a local-first Chrome extension that removes prompt fluff on Cha
 │ • content.js — Send/Enter intercept │     │ FastAPI :8000                    │
 │ • preview modal — human in the loop │────►│ POST /v1/compress                │
 │ • dashboard — tokens / bypass / kill│     │ Gemma via Fireworks (if keyed)   │
-│ • sniffer.js MAIN world — fetch peek│     │ In-memory hash cache (no prompt) │
+│ • sniffer.js MAIN world — fetch peek│     │ SQLite cache: compressed results │
 │ • regex + optional Ollama           │     │ Never logs prompt bodies         │
 └─────────────────────────────────────┘     └──────────────────────────────────┘
 ```
@@ -59,7 +59,7 @@ BrevityPrompt is a local-first Chrome extension that removes prompt fluff on Cha
 2. From repo root:  
    ```bash
    podman compose up --build
-   # or: docker compose up --build
+   # Docker-compatible fallback: docker compose up --build
    ```  
 3. `curl http://localhost:8000/health` → `"fireworks_configured": true`  
 4. Settings → AI: cloud compression **on**, min chars **280** (or lower for demo)  

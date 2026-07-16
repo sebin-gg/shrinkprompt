@@ -106,17 +106,17 @@ BrevityPrompt uses an SQLite database (`cache.db`) with Write-Ahead Logging (WAL
 1. **Environment Setup**: Copy `.env.example` to `.env` and set `FIREWORKS_API_KEY`.
 2. **Launch Container**:
    ```bash
-   docker compose up --build -d
+   podman compose up --build -d
    ```
-   *(or `podman compose up --build -d` if using Podman)*
+   Docker Compose compatibility fallback: `docker compose up --build -d`.
 3. **Verify API & Database Initialisation**:
    - Visit: `http://localhost:8000/health`
    - You should see `cache_entries: 0` in the response, confirming the table exists.
-   - Run `docker compose exec companion ls -la` (or inspect host folder) to verify that `cache.db`, `cache.db-wal`, and `cache.db-shm` files are successfully created.
+   - Run `podman compose exec brevity-companion ls -la` to verify `cache.db`, `cache.db-wal`, and `cache.db-shm` inside the container filesystem. Docker fallback: replace `podman compose` with `docker compose`.
 4. **Test Caching and Persistence**:
    - Send a prompt of length ≥280 characters with the toggle turned ON.
    - Refresh the `/health` endpoint: `cache_entries` will increment to `1`.
-   - Run `docker compose restart companion` to restart the service worker backend.
+   - Run `podman compose restart brevity-companion` to restart the Companion.
    - Refresh `/health` again: `cache_entries` remains at `1`, verifying successful SQLite persistence!
 
 
@@ -219,7 +219,7 @@ To launch the isolated Chrome profile and directory watcher:
 npm run dev
 ```
 
-For complete guidelines on inspecting the Service Worker console, resolving compiler issues, and running Docker ports, refer to the **[DEVELOPMENT.md](./DEVELOPMENT.md)** guide.
+For complete guidelines on inspecting the Service Worker console, resolving compiler issues, and running Podman ports, refer to the **[DEVELOPMENT.md](./DEVELOPMENT.md)** guide. Docker Compose remains compatible.
 
 ### View Console Logs
 
