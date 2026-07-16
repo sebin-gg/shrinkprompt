@@ -2,7 +2,7 @@
 ## Track 3 (Unicorn) Submission Brief
 
 **Product:** Hybrid browser extension + containerized AI companion  
-**Version:** 5.0.0  
+**Version:** 5.0.0
 **Open model:** Google **Gemma-2-9b-it** via **Fireworks AI** (AMD GPU cloud inference)  
 **Repo root:** folder containing `manifest.json` and `docker-compose.yml`
 
