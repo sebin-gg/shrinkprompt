@@ -1,8 +1,8 @@
 """BrevityPrompt containerized semantic-compression service (AMD Track 3).
 
-Prompts are accepted only for the duration of a request and are never logged
-or written to disk. Set FIREWORKS_API_KEY to enable Gemma compression on
-Fireworks (AMD GPU cloud inference).
+Raw prompts are never logged or written to disk. Compressed prompt results
+are stored in the local SQLite cache. Set FIREWORKS_API_KEY to enable Gemma
+compression on Fireworks (AMD GPU cloud inference).
 """
 
 from __future__ import annotations
@@ -21,7 +21,10 @@ from pydantic import BaseModel, Field
 app = FastAPI(
     title="BrevityPrompt Companion",
     version="1.1.0",
-    description="Local-first prompt compressor with optional Fireworks Gemma.",
+    description=(
+        "Local-first prompt compressor with optional Fireworks Gemma. Raw prompts "
+        "are not stored; compressed results are persisted in the local SQLite cache."
+    ),
 )
 
 FIREWORKS_BASE_URL = os.getenv("FIREWORKS_BASE_URL", "https://api.fireworks.ai/inference/v1")
@@ -128,7 +131,7 @@ def _cache_get(key: str) -> dict | None:
 
 
 def _cache_set(key: str, payload: dict) -> None:
-    """Stores prompt result in persistent cache.
+    """Stores a compressed prompt result in the persistent cache.
 
     Enforces maximum cache size by removing the oldest items.
     """

@@ -5,7 +5,7 @@
 **AMD Developer Hackathon Act II — Track 3 (Unicorn)** hybrid product: extension + Docker/Podman companion. See **[SUBMISSION.md](SUBMISSION.md)** for the judge demo script.
 
 Repo folder may be named `shrinkprompt`; product name is **BrevityPrompt**. Load the folder that contains `manifest.json`.  
-**Version:** 1.1.0
+**Extension version:** 5.0.0
 
 ---
 
@@ -18,10 +18,10 @@ Repo folder may be named `shrinkprompt`; product name is **BrevityPrompt**. Load
 | Edit in composer | Put shortened text back in the input (you send when ready) |
 | Send original | Skip compression for that prompt |
 | Custom regex | Settings → Patterns (enable/edit/add custom filters) |
-| Local-first | Short prompts use only in-browser regex |
+| Local-first | Regex and five-stage structural optimization run in the extension |
 | Companion (optional) | Long prompts (≥ `minCloudCharacters`, default **280**) → `localhost:8000` FastAPI → Fireworks Gemma when key set |
 | Ollama (optional) | Settings → AI: local model first, then companion |
-| Savings stats | Popup shows estimated tokens saved (char/4 heuristic, local only) |
+| Savings stats | Popup shows tokenizer-based token savings for accepted shortened prompts |
 | Token dashboard | Shadow DOM HUD on chat pages (session requests, ≈tokens, last provider) |
 | MAIN-world sniffer | Observes fetch/XHR for dashboard; optional kill of in-flight requests |
 | Bypass hotkeys | Alt+Shift+B one-send bypass · Alt+Shift+K abort · Alt+Shift+D hide HUD |
@@ -36,13 +36,13 @@ Chrome extensions cannot ship as the only deliverable for containerization requi
 Browser (MV3 extension)                  Container (podman/docker compose)
 ───────────────────────                  ────────────────────────────────
 content.js intercepts Send/Enter    →    (no prompt leaves browser unless)
-background.js regex clean           →    user enabled cloud path AND length ≥ threshold
+background.js local optimization    →    user enabled remote path AND length ≥ threshold
 optional POST /v1/compress  ───────────► FastAPI companion
 preview modal → user chooses        ◄─── Gemma compress (Fireworks) or local-fallback
 composer updated → site Send
 ```
 
-- **Regex path:** always local; no network.
+- **Local path:** regex cleaning plus a five-stage parser/optimizer/validator pipeline; no network.
 - **Semantic path:** opt-in via Settings (cloud compression / Ollama). Companion never logs prompts; without `FIREWORKS_API_KEY` it returns stripped input as `local-fallback`.
 - The preview modal appears **instantly** with the local regex result. Semantic compression races in the background; if it arrives within **3 seconds**, the modal live-upgrades to the better result.
 
@@ -52,7 +52,8 @@ composer updated → site Send
 
 | Claim | Reality |
 |-------|---------|
-| Prompts stored by us | **No** — extension does not persist prompt text; companion does not log body |
+| Extension prompt storage | **No** — extension stores aggregate stats only, not prompt text |
+| Companion cache | Raw prompts are not stored; compressed results are cached in Companion SQLite for the configured TTL |
 | Always 100% local | **No** — optional Ollama (`localhost:11434`) or companion (`localhost:8000` → Fireworks) when enabled and prompt long enough |
 | Regex only | Yes when disabled, short prompt, cloud off, or remote fails |
 | Stats | Aggregates only (counts/chars/token estimates) in `chrome.storage.local` |
@@ -114,7 +115,7 @@ If Ollama fails, extension tries companion (if cloud compression on), else local
 1. User enables extension in popup.
 2. On Enter/Send, content script **synchronously** `preventDefault` / `stopImmediatePropagation` so the host app does not send first.
 3. Background applies enabled regex patterns (`cleanPrompt`).
-4. If length ≥ threshold and remote options on → Ollama and/or companion run concurrently.
+4. If length ≥ threshold and remote options on → Ollama and/or companion race concurrently.
 5. Modal appears **instantly** with regex result; if semantic arrives within 3s, modal live-upgrades.
 6. Modal: **Send Shortened** | **Edit in Composer** | **Send Original** | **Cancel**.
 
@@ -166,7 +167,7 @@ shrinkprompt/
 │   ├── background.js          # Service worker — imports from shared/
 │   ├── sniffer.js             # MAIN-world fetch/XHR observer
 │   ├── dashboard.js           # Shadow DOM token HUD
-│   ├── shortener.js           # Content-script shim (Phase 3 target)
+│   ├── shortener.js           # Content-script compatibility shim
 │   ├── preview-modal.js       # Comparison modal
 │   ├── popup.*                # Toggle UI
 │   └── settings.*             # Patterns + AI config
@@ -199,8 +200,8 @@ Settings → **AI**:
 Companion base URL is editable in Settings → AI (must stay on **localhost / 127.0.0.1** so it matches `host_permissions` in `manifest.json`). Non-local hosts need a manifest change + reload.
 
 #### Caching & Privacy in the Companion
-The FastAPI companion container incorporates a persistent SQLite database (`cache.db`) running in Write-Ahead Logging (WAL) mode.
-- **Privacy First**: Prompts are never stored raw. The service hashes the prompt using SHA-256 and matches against the `prompt_hash` key.
+The FastAPI companion uses a SQLite database (`cache.db`) in its container filesystem in Write-Ahead Logging (WAL) mode; the supplied Compose file does not mount it as a persistent host volume.
+- **Privacy**: Raw prompts are not stored. The service hashes the prompt using SHA-256 for `prompt_hash` lookup, while its compressed result is cached.
 - **LRU/Eviction Policy**: The database preserves a maximum of `64` entries (configurable via `COMPRESS_CACHE_MAX`) with a `10-minute` expiration TTL (configurable via `COMPRESS_CACHE_TTL_SEC`), automatically evicting oldest/expired records.
 - **Vulnerability Defense**: SQL injection is completely prevented via strict query parameterisation.
 
@@ -295,12 +296,12 @@ BrevityPrompt includes a local browser launch and watch script to speed up devel
 
 To launch the development browser sandbox:
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 To run all tokenizer and regex unit tests:
 ```bash
-npm test
+pnpm test
 ```
 
 For complete instructions on inspecting the Service Worker console, content scripts, and setting up Ollama/Docker companion ports, see **[DEVELOPMENT.md](DEVELOPMENT.md)**.

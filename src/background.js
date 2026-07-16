@@ -364,6 +364,7 @@ async function handleCleanPrompt(text, sendResponse, senderTab) {
     }
   } catch (error) {
     console.error('[BrevityPrompt] Error cleaning prompt:', error);
+    sendResponse({ original: text, shortened: text, cleaned: false });
   }
 }
 
