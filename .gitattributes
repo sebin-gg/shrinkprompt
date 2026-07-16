@@ -1,0 +1,6 @@
+# Keep text diffs stable across contributor platforms.
+* text=auto eol=lf
+
+# Binary assets must not receive line-ending conversion.
+*.png binary
+*.wasm binary

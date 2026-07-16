@@ -389,9 +389,14 @@ For complete instructions on inspecting the Service Worker console, content scri
 
 Apache License 2.0 — see [LICENSE](LICENSE).
 
+## Code of Conduct
+
+Participation follows the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Contributing
 
-Issues and PRs welcome. Prefer small fixes with README notes when behavior changes.
+Issues and PRs welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup,
+testing, privacy, and pull-request requirements.
 
 ### Contributors
 
