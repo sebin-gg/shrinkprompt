@@ -64,11 +64,27 @@ Patterns and toggle live in `chrome.storage.sync`. Do not treat Fireworks-enable
 
 ## Quick start — extension
 
-1. Clone/download this repo.
-2. Chrome → `chrome://extensions/` → **Developer mode** → **Load unpacked**.
-3. Select the repo root (folder with `manifest.json`), not a parent path.
-4. Pin **BrevityPrompt** → open popup → turn **Enabled** on.
-5. Use ChatGPT / Claude / Gemini → type → Enter or Send → preview modal.
+Supported target: Chrome and Chromium-based desktop browsers on Windows, macOS, and Linux. Chrome Android does not support normal extension-store installs.
+
+1. Get source:
+   ```bash
+   git clone https://github.com/sebin-gg/shrinkprompt.git
+   cd shrinkprompt
+   ```
+   Or download and extract the repository ZIP.
+2. No build or dependency install is required for unpacked use; this extension is vanilla JavaScript.
+3. Open Chrome → `chrome://extensions/` → enable **Developer mode** → select **Load unpacked**.
+4. Select this repository root—the folder containing `manifest.json`, not its parent.
+5. Pin **BrevityPrompt** → open the popup → turn **Enabled** on.
+6. Open ChatGPT, Claude, or Gemini → type a prompt → press Enter or Send → choose from the preview modal.
+
+To create the Chrome Web Store upload ZIP (not used for **Load unpacked**):
+
+```powershell
+sfw pnpm run package:chrome
+```
+
+Upload `dist/brevityprompt-<version>-chrome.zip` through the Chrome Web Store Developer Dashboard. See [RELEASE.md](RELEASE.md) for submission requirements.
 
 Icons: `icons/icon-16.png`, `icon-48.png`, `icon-128.png` (regenerate via `generate-icons.sh` if missing). See [INSTALL.md](INSTALL.md).
 
@@ -296,12 +312,12 @@ BrevityPrompt includes a local browser launch and watch script to speed up devel
 
 To launch the development browser sandbox:
 ```bash
-pnpm run dev
+sfw pnpm run dev
 ```
 
 To run all tokenizer and regex unit tests:
 ```bash
-pnpm test
+sfw pnpm test
 ```
 
 For complete instructions on inspecting the Service Worker console, content scripts, and setting up Ollama/Podman companion ports, see **[DEVELOPMENT.md](DEVELOPMENT.md)**. Docker Compose remains a compatibility fallback.

@@ -216,7 +216,7 @@ BrevityPrompt provides a zero-install local browser development sandbox.
 
 To launch the isolated Chrome profile and directory watcher:
 ```bash
-npm run dev
+sfw pnpm run dev
 ```
 
 For complete guidelines on inspecting the Service Worker console, resolving compiler issues, and running Podman ports, refer to the **[DEVELOPMENT.md](./DEVELOPMENT.md)** guide. Docker Compose remains compatible.
