@@ -392,6 +392,11 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 Issues and PRs welcome. Prefer small fixes with README notes when behavior changes.
 
+### Contributors
+
+- [Swathy J](https://github.com/swathyj348)
+- [Muhammed Adil C](https://github.com/tWiNFigHTer-gif)
+
 ### Roadmap ideas
 
 - [x] MAIN-world fetch sniffer (strategy: deeper intercept)
